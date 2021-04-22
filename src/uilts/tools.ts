@@ -6,7 +6,7 @@ const Tools = {
   },
   //operator大于或者等于operator2 false
   compareOperator(operator: any, operator2: any) {
-    return (operator === '+' || operator === '-') && (operator2 === '*' || operator2 === '/');
+    return (operator === '+' || operator === '-') && ((operator2 === '*' || operator2 === 'x' || operator2 === '×') || operator2 === '/' || operator2 === '÷');
   },
   countStr(str: string, k: any) {
     // 新建一个对象，存储字符个数，字符key ｜ 数量 value
@@ -24,10 +24,7 @@ const Tools = {
     return objCount[k];
   },
   conversionExpression(str: string) {
-    //初始化
-    str = str.trim();
-    str = str.replace(/。/g, '.');
-    str = str.replace(/=/g, '');
+
     //初始化两个栈：运算符栈S1和储存中间结果的栈S2；
     const stack_1 = new Stack();  //存放运算符
     const stack_2 = new Stack();  //储存中间结果
@@ -38,19 +35,19 @@ const Tools = {
     // 处理多位数
     let temp = [];
     let tempStr = [];
-    for(let i = 0; i < str.length; i++){
+    for (let i = 0; i < str.length; i++) {
       let value = str[i];
-      if(!Tools.isNumber(value)){  //符号直接入栈
+      if (!Tools.isNumber(value)) {  //符号直接入栈
         temp.push(value)
-      }else{
-        if(value != '-'){ //数字一直往后扫描
+      } else {
+        if (value != '-') { //数字一直往后扫描
           tempStr.push(value);
-          while(i < str.length){
+          while (i < str.length) {
             i++;
             value = str[i];
-            if(Tools.isNumber(value) || value != '.'){  //数字存放到临时表
+            if (Tools.isNumber(value) || value == '.') {  //数字存放到临时表
               tempStr.push(value)
-            }else{
+            } else {
               //取出来
               temp.push(tempStr.join(''));
               i--; //还原
@@ -58,7 +55,7 @@ const Tools = {
               break;
             }
           }
-        }else {
+        } else {
           // console.log('表达式错误');
         }
       }
@@ -120,6 +117,61 @@ const Tools = {
     }
     console.log(stack_2);
     return stack_2
+  },
+  calcExpression(str: any) {
+    let temp = str.data;
+    let temp1;
+    let temp2;
+    let res;
+    const stack_3 = new Stack();
+    temp.map(function (val) {
+      if (Tools.isNumber(val)) {
+        stack_3.push(val)
+      } else {
+        temp1 = stack_3.pop();
+        temp2 = stack_3.pop();
+        switch (val) {
+          case "+":
+            console.log('+')
+            res = temp1 * 1 + temp2 * 1;
+            break;
+          case "-":
+            console.log('-')
+            res = temp2 * 1 - temp1 * 1;
+            break;
+          default:
+            if (val == '*' || val == '×' || val == 'x') {
+              res = temp1 * 1 * temp2 * 1;
+            } else if (val == '/' || val == '÷' || val == '') {
+              res = temp2 * 1 / temp1 * 1;
+            }
+            break;
+        }
+        stack_3.push(res)
+      }
+      console.log(stack_3.data)
+    });
+    return stack_3.pop()
+  },
+  //判断是否为数字
+  BASEisNotNum(theFloat: any) {
+    //判断是否为浮点数
+    let len = theFloat.length;
+    let dotNum=0;
+    if (len == 0)
+      return true;
+    for(var i=0;i<len;i++){
+      let oneNum=theFloat.substring(i,i+1);
+      if (oneNum==".")
+        dotNum++;
+      if ( ((oneNum<"0" || oneNum>"9") && oneNum!=".") || dotNum>1)
+        return true;
+    }
+    if (len>1 && theFloat.substring(0,1)=="0"){
+      if (theFloat.substring(1,2)!=".")
+        return true;
+    }
+    return false;
   }
 };
 export {Tools};

@@ -19,6 +19,10 @@ class Stack {
   getStackTop(){
     return this.data[this.data.length - 1];
   }
+
+  setData(data:any){
+    this.data = data
+  }
 }
 
 export {
