@@ -59,7 +59,7 @@ const Tools = {
             }
           }
         }else {
-          console.log('表达式错误');
+          // console.log('表达式错误');
         }
       }
     }
