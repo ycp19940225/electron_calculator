@@ -1,0 +1,18 @@
+.item{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.result{
+  margin-top: 1rem;
+}
+.hand_box{
+  margin-top: 1rem;
+}
+.record{
+  margin-top: 1rem;
+}
+.record_list{
+  margin-top: 1rem;
+}

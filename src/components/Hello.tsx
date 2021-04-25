@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Button, Input, List, message} from 'antd';
 
 import { Stack } from '../uilts/Stack';
@@ -10,13 +10,23 @@ export default function Hello() {
   const [value, setValue] = useState('');
   const [history, setHistory] = useState([]);
   const historyRef = useRef();
-  historyRef.current = history
+  historyRef.current = history;
   function setChange(event: any) {
     let value = event.target.value;
     setValue(value)
   }
-  // 中缀转后缀表达式
+  useEffect(function () {
+    try {
+      const info = JSON.parse(localStorage.getItem('history')); //
+      setHistory(info);
+    }catch (e) {
 
+    }
+  },[]);
+  useEffect(function () {
+    localStorage.setItem('history', JSON.stringify(history)); //
+  },[history]);
+  // 中缀转后缀表达式
   // 计算结果
   function calculate() {
     //初始化
@@ -45,12 +55,11 @@ export default function Hello() {
     };
     setHistory(() => {
       let temp = historyRef.current;
-      temp.push(his);
+      temp.unshift(his);
       return [...temp];
     });
   }
   function deleteHistory(key) {
-    console.log(historyRef.current)
     setHistory(() => {
       let temp = historyRef.current
       temp.splice(key, 1)
@@ -61,6 +70,9 @@ export default function Hello() {
     if(e.keyCode == 13){
       calculate();
     }
+  }
+  function clearAll() {
+    setHistory([])
   }
   return (
     <div>
@@ -74,15 +86,17 @@ export default function Hello() {
             onKeyDownChange(e)
           }}
         />
-        <div>
-          计算结果:
+        <div className="result">
+          计算结果:&nbsp;&nbsp;
           {result}
         </div>
-        <Button type="primary" onClick={calculate}> 点击计算 </Button>
-        <div>
-          历史记录<HistoryOutlined />:
+        <div className="hand_box">
+          <Button type="primary" onClick={calculate}> 点击计算 </Button>
         </div>
-        <div>
+        <div className='record'>
+          历史记录<HistoryOutlined />:  &nbsp;&nbsp;<Button type="primary" danger size='small' onClick={() => {clearAll()}}>清除记录</Button>
+        </div>
+        <div className="record_list">
           <List
 
             bordered
@@ -90,11 +104,19 @@ export default function Hello() {
             renderItem={(item,key) => (
               <List.Item
               >
-                表达式:{ item.str }
-                结果:{ item.res }
-                <a key="list-delete" style={{color:"red"}} onClick={() => {
-                  deleteHistory(key)
-                }}>刪除</a>
+               <div className="item">
+                 <div>
+                   表达式:{ item.str }
+                 </div>
+                 <div>
+                   结果:{ item.res }
+                 </div>
+                 <div>
+                   <a key="list-delete" style={{color:"red"}} onClick={() => {
+                     deleteHistory(key)
+                   }}>刪除</a>
+                 </div>
+               </div>
               </List.Item>
             )}
           />
